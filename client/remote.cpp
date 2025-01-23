@@ -247,9 +247,15 @@ static UseCSMsg *get_server(MsgChannel *local_daemon)
     Msg *umsg = local_daemon->get_msg( timeout );
 
     if (!umsg || umsg->type != M_USE_CS) {
-        log_warning() << "reply was not expected use_cs " << (umsg ? (char)umsg->type : '0')  << endl;
         ostringstream unexpected_msg;
-        unexpected_msg << "Error 1 - expected use_cs reply, but got " << (umsg ? (char)umsg->type : '0') << " instead";
+        if (!umsg) {
+            log_warning() << "reply timeout " << timeout << endl;
+            unexpected_msg << "Error 1 - reply timeout " << timeout;
+        }
+        else {
+            log_warning() << "reply was not expected use_cs " << (umsg ? (char)umsg->type : '0')  << endl;
+            unexpected_msg << "Error 1 - expected use_cs reply, but got " << (umsg ? (char)umsg->type : '0') << " instead";
+        }
         delete umsg;
         throw client_error(1, unexpected_msg.str());
     }
@@ -398,8 +404,9 @@ static void receive_file(const string& output_file, MsgChannel* cserver)
         throw client_error(30, "Error 30 - error closing temp file");
 
     }
+
     if(rename(tmp_file.c_str(), output_file.c_str()) != 0) {
-        log_perror("Failed to rename temporary file: ");
+        log_perror("Failed to rename temporary file: ") << '\t' << tmp_file << endl;
         if(unlink(tmp_file.c_str()) != 0)
         {
             log_perror("delete temporary file - might be related to rename failure above");
