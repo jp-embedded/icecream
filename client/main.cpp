@@ -556,8 +556,12 @@ int main(int argc, char **argv)
         }
         catch (client_error& error) {
             if (remote_daemon.size()) {
-                log_error() << "got exception " << error.what()
-                            << " (" << remote_daemon.c_str() << ") " << endl;
+                if( error.errorCode == 2 ) {
+                    log_warning() << "got exception " << error.what() << " (" << remote_daemon.c_str() << ") " << endl;
+                }
+                else {
+                    log_error() << "got exception " << error.what() << " (" << remote_daemon.c_str() << ") " << endl;
+                }
             } else {
                 log_error() << "got exception " << error.what() << " (this should be an exception!)" <<
                             endl;

@@ -47,7 +47,7 @@ CompileServer::CompileServer(const int fd, struct sockaddr *_addr, const socklen
     , m_hostPlatform()
     , m_load(1000)
     , m_maxJobs(0)
-    , m_noRemote(false)
+    , m_noRemote(true)
     , m_jobList()
     , m_state(CONNECTED)
     , m_type(UNKNOWN)
@@ -67,7 +67,7 @@ CompileServer::CompileServer(const int fd, struct sockaddr *_addr, const socklen
     , m_inConnAttempt(0)
     , m_nextConnTime(0)
     , m_lastConnStartTime(0)
-    , m_acceptingInConnection(true)
+    , m_acceptingInConnection(false)
 {
 }
 
