@@ -1237,12 +1237,17 @@ static bool handle_login(CompileServer *cs, Msg *_m)
 
     handle_monitor_stats(cs);
 
-    /* remove any other clients with the same IP and name, they must be stale */
+    // remove any other clients with the same IP and name, they must be stale.
+    // In this case, postpone connection test for 5 minutes to prevent
+    // scheduling jobs to servers with unstable connections.
     for (list<CompileServer *>::iterator it = css.begin(); it != css.end();) {
         if (cs->eq_ip(*(*it)) && cs->nodeName() == (*it)->nodeName()) {
             CompileServer *old = *it;
             ++it;
             handle_end(old, nullptr);
+            if (!cs->noRemote()) {
+                cs->setNextConnTime(time(nullptr) + 5*60);
+            }
             continue;
         }
 

@@ -243,6 +243,11 @@ void CompileServer::setNodeName(const string &name)
     m_nodeName = name;
 }
 
+void CompileServer::setNextConnTime(time_t time)
+{
+    m_nextConnTime = time;
+}
+
 bool CompileServer::matches(const string& nm) const
 {
     return m_nodeName == nm || name == nm;
